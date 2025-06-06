@@ -6,7 +6,7 @@
     <title>Генератор Рішень та Ворожіння</title>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        /* Базові стилі та загальний вигляд */
+
         body {
             margin: 0;
             font-family: 'Montserrat', sans-serif;
@@ -30,7 +30,7 @@
             font-size: 2.8rem;
         }
 
-        /* Стилі для меню */
+
         #menu {
             display: flex;
             flex-wrap: wrap;
@@ -68,7 +68,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
-        /* Стилі для вкладок (генераторів) */
+
         .tab {
             display: none;
             max-width: 600px;
@@ -154,16 +154,15 @@
             margin: 0;
         }
 
-        /* Стилі для кнопки "Назад до меню" */
         #backButton {
             display: none;
             margin-top: 20px;
             background: #6b7280;
             color: white;
             border: none;
-            padding: 12px 25px;
+            padding: 12px 25px; 
             border-radius: 12px;
-            font-size: 1rem;
+            font-size: 1rem; 
             cursor: pointer;
             transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
             position: sticky;
@@ -176,16 +175,15 @@
             box-shadow: 0 5px 10px rgba(0,0,0,0.2);
         }
 
-        /* Додаткові стилі для вкладок ворожінь */
         .fortune-category-buttons {
             display: flex;
-            flex-direction: column; /* Вертикальний список кнопок для мобільного */
+            flex-direction: column;
             gap: 15px;
             margin-top: 20px;
             width: 100%;
         }
         .fortune-category-buttons button {
-            background: #9d174d; /* Свій колір для кнопок ворожіння */
+            background: #9d174d;
             width: 100%;
             padding: 15px 20px;
             font-size: 1.1rem;
@@ -194,7 +192,6 @@
             background: #831843;
         }
 
-        /* Медіа-запити для мобільних пристроїв */
         @media (max-width: 768px) {
             h1 {
                 font-size: 2.2rem;
@@ -236,10 +233,7 @@
                 padding: 10px 12px;
                 font-size: 1rem;
             }
-            #backButton {
-                padding: 10px 20px;
-                font-size: 0.9rem;
-            }
+            /* ВИДАЛЕНО: #backButton { padding: 10px 20px; font-size: 0.9rem; } */
         }
     </style>
 </head>
@@ -280,7 +274,7 @@
     <div class="tab" id="custom">
         <h2>Генератор з власних варіантів</h2>
         <p>Введіть варіанти через кому:</p>
-        <input type="text" id="userOptions" placeholder="Наприклад: піти спати, подивитись серіал, почати нове життя">
+        <input type="text" id="userOptions" placeholder="почати нове життя, залишити старе життя, почати старе життя..">
         <button onclick="generateFromInput()">Обрати варіант</button>
         <div class="result" id="inputResult"></div>
     </div>
@@ -324,7 +318,6 @@
     </div>
 
     <script>
-        // Функції для перемикання вкладок
         function showTab(tabId) {
             document.querySelectorAll('.tab').forEach(tab => tab.style.display = 'none');
             document.getElementById(tabId).style.display = 'block';
@@ -338,7 +331,6 @@
             document.getElementById('backButton').style.display = 'none';
         }
 
-        // --- Функції генераторів ---
 
         function generateYesNo() {
             const options = ['Так', 'Ні', 'Абоні'];
@@ -346,7 +338,7 @@
         }
 
         function generatePercent() {
-            const percent = Math.floor(Math.random() * 101); // Від 0 до 100
+            const percent = Math.floor(Math.random() * 101); 
             document.getElementById('percentResult').innerText = percent + '%';
         }
 
@@ -416,7 +408,6 @@
             }
         }
 
-        // --- Генератор випадкової дати (день і місяць) ---
         function generateRandomDate() {
             const resultEl = document.getElementById('randomDateResult');
             const daysInMonth = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -431,7 +422,6 @@
 
             resultEl.innerText = `${randomDay} ${months[randomMonthIndex]}`;
         }
-        // Генератор імен знайомих (без змін)
         const maleNames = [
             'Степан', 'Єгор', 'Береза', 'Вавілон', 'Максим Бондаренко',
             'Женя мальчік', 'Артем', 'Ілюша гітаріст', 'Ілюха', 'Юрчик',
@@ -468,7 +458,6 @@
             resultEl.innerText = namesToChooseFrom[randomIndex];
         }
 
-        // --- Розширений Генератор Ворожінь ---
         const fortuneData = {
             day: [
                 'Сьогоднішній день принесе несподівану радість.',
@@ -612,7 +601,10 @@
                 resultEl.innerText = 'Немає передбачень для цієї категорії.';
             }
         }
-
+        backToMenu();
+    </script>
+</body>
+</html>
 
         // Ініціалізація: показати меню при завантаженні
         backToMenu();
