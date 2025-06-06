@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор Рішень та Ворожіння</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Базові стилі та загальний вигляд */
+        body {
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #a78bfa 0%, #facc15 100%);
+            color: #1f2937;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        h1 {
+            font-family: 'Comfortaa', cursive;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            font-size: 2.8rem;
+        }
+
+        /* Стилі для меню */
+        #menu {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            max-width: 800px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        #menu button {
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            flex-grow: 1;
+            min-width: 200px;
+            max-width: 280px;
+        }
+        #menu button:hover {
+            background: #d97706;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+        #menu button:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Стилі для вкладок (генераторів) */
+        .tab {
+            display: none;
+            max-width: 600px;
+            width: 100%;
+            margin-top: 30px;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .tab h2 {
+            font-family: 'Comfortaa', cursive;
+            color: #6d28d9;
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+        }
+        .tab p {
+            font-size: 1.1rem;
+            color: #4b5563;
+            margin-bottom: 20px;
+        }
+        .tab button {
+            background: #06b6d4;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            margin-top: 20px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: 600;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            width: auto;
+            min-width: 180px;
+        }
+        .tab button:hover {
+            background: #0891b2;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+        .tab button:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .result {
+            margin-top: 30px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #7c3aed;
+            min-height: 1.5em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            word-break: break-word;
+            line-height: 1.3;
+        }
+        input[type=text], input[type=number], select {
+            padding: 12px 15px;
+            width: calc(100% - 30px);
+            border: 2px solid #c084fc;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            margin-top: 15px;
+            background: #f9fafb;
+            color: #1f2937;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-sizing: border-box;
+        }
+        input[type=text]:focus, input[type=number]:focus, select:focus {
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+            outline: none;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Стилі для кнопки "Назад до меню" */
+        #backButton {
+            display: none;
+            margin-top: 20px;
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            position: sticky;
+            top: 10px;
+            z-index: 1000;
+        }
+        #backButton:hover {
+            background: #4b5563;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Додаткові стилі для вкладок ворожінь */
+        .fortune-category-buttons {
+            display: flex;
+            flex-direction: column; /* Вертикальний список кнопок для мобільного */
+            gap: 15px;
+            margin-top: 20px;
+            width: 100%;
+        }
+        .fortune-category-buttons button {
+            background: #9d174d; /* Свій колір для кнопок ворожіння */
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+        }
+        .fortune-category-buttons button:hover {
+            background: #831843;
+        }
+
+        /* Медіа-запити для мобільних пристроїв */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+                margin-bottom: 20px;
+            }
+            #menu {
+                flex-direction: column;
+                gap: 10px;
+                padding: 15px;
+                border-radius: 15px;
+            }
+            #menu button {
+                width: 100%;
+                max-width: none;
+                padding: 12px 20px;
+                font-size: 1rem;
+            }
+            .tab {
+                margin-top: 20px;
+                padding: 20px;
+                border-radius: 15px;
+            }
+            .tab h2 {
+                font-size: 1.8rem;
+                margin-bottom: 20px;
+            }
+            .tab button {
+                padding: 12px 25px;
+                font-size: 1.1rem;
+                width: 100%;
+                min-width: unset;
+            }
+            .result {
+                font-size: 2rem;
+                margin-top: 25px;
+            }
+            input[type=text], input[type=number], select {
+                width: 100%;
+                padding: 10px 12px;
+                font-size: 1rem;
+            }
+            #backButton {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Генератор Рішень</h1>
+
+    <nav id="menu">
+        <button onclick="showTab('yesNo')">Так / Ні / Абоні</button>
+        <button onclick="showTab('percent')">Відсотковий генератор</button>
+        <button onclick="showTab('advice')">Генератор цитат</button>
+        <button onclick="showTab('custom')">Генератор з власних варіантів</button>
+        <button onclick="showTab('dateGenerator')">Генератор дати</button>
+        <button onclick="showTab('nameGenerator')">Генератор імен</button>
+        <button onclick="showTab('fortuneMenu')">Ворожіння</button>
+        <button onclick="showTab('number')">Випадкове число</button>
+    </nav>
+
+    <button id="backButton" onclick="backToMenu()">⬅ Назад до меню</button>
+
+    <div class="tab" id="yesNo">
+        <h2>Так / Ні / Абоні</h2>
+        <button onclick="generateYesNo()">Генерувати</button>
+        <div class="result" id="yesNoResult"></div>
+    </div>
+
+    <div class="tab" id="percent">
+        <h2>Відсотковий генератор</h2>
+        <button onclick="generatePercent()">Генерувати</button>
+        <div class="result" id="percentResult"></div>
+    </div>
+
+    <div class="tab" id="advice">
+        <h2>Генератор порад</h2>
+        <button onclick="generateAdvice()">Отримати пораду</button>
+        <div class="result" id="adviceResult"></div>
+    </div>
+
+    <div class="tab" id="custom">
+        <h2>Генератор з власних варіантів</h2>
+        <p>Введіть варіанти через кому:</p>
+        <input type="text" id="userOptions" placeholder="Наприклад: піти спати, подивитись серіал, почати нове життя">
+        <button onclick="generateFromInput()">Обрати варіант</button>
+        <div class="result" id="inputResult"></div>
+    </div>
+
+    <div class="tab" id="dateGenerator">
+        <h2>Генератор випадкової дати</h2>
+        <button onclick="generateRandomDate()">Згенерувати дату</button>
+        <div class="result" id="randomDateResult"></div>
+    </div>
+
+    <div class="tab" id="nameGenerator">
+        <h2>Генератор імен знайомих</h2>
+        <select id="nameGenderFilter">
+            <option value="all">Всі</option>
+            <option value="male">Хлопці</option>
+            <option value="female">Дівчата</option>
+        </select>
+        <button onclick="generateRandomName()">Згенерувати ім'я</button>
+        <div class="result" id="randomNameResult"></div>
+    </div>
+
+    <div class="tab" id="fortuneMenu">
+        <h2>Ворожіння</h2>
+        <p>Оберіть категорію ворожіння:</p>
+        <div class="fortune-category-buttons">
+            <button onclick="generateFortune('day')">На день</button>
+            <button onclick="generateFortune('relationships')">На стосунки</button>
+            <button onclick="generateFortune('future')">На майбутнє</button>
+            <button onclick="generateFortune('secret')">На розкриття чужого секрету (загадайте людину)</button>
+        </div>
+        <div class="result" id="fortuneResult"></div>
+    </div>
+
+    <div class="tab" id="number">
+        <h2>Випадкове число</h2>
+        <p>Введіть діапазон:</p>
+        <input type="number" id="numFrom" placeholder="Від">
+        <input type="number" id="numTo" placeholder="До">
+        <button onclick="generateNumber()">Генерувати</button>
+        <div class="result" id="numberResult"></div>
+    </div>
+
+    <script>
+        // Функції для перемикання вкладок
+        function showTab(tabId) {
+            document.querySelectorAll('.tab').forEach(tab => tab.style.display = 'none');
+            document.getElementById(tabId).style.display = 'block';
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('backButton').style.display = 'inline-block';
+        }
+
+        function backToMenu() {
+            document.querySelectorAll('.tab').forEach(tab => tab.style.display = 'none');
+            document.getElementById('menu').style.display = 'flex';
+            document.getElementById('backButton').style.display = 'none';
+        }
+
+        // --- Функції генераторів ---
+
+        function generateYesNo() {
+            const options = ['Так', 'Ні', 'Абоні'];
+            document.getElementById('yesNoResult').innerText = options[Math.floor(Math.random() * options.length)];
+        }
+
+        function generatePercent() {
+            const percent = Math.floor(Math.random() * 101); // Від 0 до 100
+            document.getElementById('percentResult').innerText = percent + '%';
+        }
+
+        function generateAdvice() {
+            const advices = [
+                'ви в тому періоді коли вам п’ять років і ви продаєте пісок',
+                'на сєгодня дряні хватить',
+                'поки що по плану прокинулись.',
+                'ти знала що твоя вшююю',
+                'с проблемой нада переспать',
+                'дєвочкі должни між собою бути солідарні. вона має поняти що то він дибіл',
+                'несирина- день коли ти маєш триматись і бути сильним',
+                'хочеш соню хоті і катю',
+                'єлизавета александревна',
+                'ти мені вже жопу заморозила!',
+                'я дам вам дєняг тільки іспортіть їм вечір',
+                'соня вибачся!!!',
+                'у нас життя по дефізу ну не щпс же',
+                'ти єш цукор бо любіш а я што б умереть',
+                'ну шо було то просрали',
+                'та для тебе хоч ковріком під домом',
+                'так у тебе ж смисл в тому що в тебе плєчі красиві',
+                'краще от душі ніж от душні',
+                'ми не работаєм патаму шо ми зайняті',
+                'чела на самокрутки розкрутим',
+                'треба труси і трохи більше',
+                'катя, можеш потом тут повесітся',
+                'вішайся потом можеш втопитися',
+                'мн інтересно а зачем тобі штани(в стилі реп)',
+                'говнойод',
+                'це пранк пєснєй!',
+                'хай йому колесики на скейті повикручуються, чорт поганий в джинсовкє',
+                'мальчіки ето для підоров',
+                'girls can you talk about liking in another place please?',
+                'есь ми є десь нас нема',
+                'одна дівчина це легше ніж дві',
+                'мама ІДЕ В АПТЕКУ а потім така СТОП НЕ НАДА ВИ Ж ТОДІ…. о книжний магазин',
+                'так всігда: прогониш класну дівчинку бо подумаєш шо може бути краще, а потом з тобою громіла',
+                'виключи ету дискатеку!!!',
+                'тампончики прийшли',
+                'насрать під двері це називається лічна непріязнь',
+                'шо ми слухаєи? borba muchin',
+                'твій олівець це наш мікропроект',
+            ];
+            document.getElementById('adviceResult').innerText = advices[Math.floor(Math.random() * advices.length)];
+        }
+
+        function generateFromInput() {
+            const input = document.getElementById('userOptions').value;
+            const options = input.split(',').map(opt => opt.trim()).filter(Boolean);
+            if (options.length > 0) {
+                document.getElementById('inputResult').innerText = options[Math.floor(Math.random() * options.length)];
+            } else {
+                document.getElementById('inputResult').innerText = 'Введи хоча б один варіант!';
+            }
+        }
+
+        function generateNumber() {
+            const from = parseInt(document.getElementById('numFrom').value);
+            const to = parseInt(document.getElementById('numTo').value);
+            const resultEl = document.getElementById('numberResult');
+            if (!isNaN(from) && !isNaN(to) && from <= to) {
+                const randomNum = Math.floor(Math.random() * (to - from + 1)) + from;
+                resultEl.innerText = randomNum;
+            } else {
+                resultEl.innerText = 'Некоректний діапазон! Введіть числа.';
+            }
+        }
+
+        // --- Генератор випадкової дати (день і місяць) ---
+        function generateRandomDate() {
+            const resultEl = document.getElementById('randomDateResult');
+            const daysInMonth = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            const months = [
+                'січня', 'лютого', 'березня', 'квітня', 'травня', 'червня',
+                'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'
+            ];
+
+            const randomMonthIndex = Math.floor(Math.random() * months.length);
+            const maxDay = daysInMonth[randomMonthIndex];
+            const randomDay = Math.floor(Math.random() * maxDay) + 1;
+
+            resultEl.innerText = `${randomDay} ${months[randomMonthIndex]}`;
+        }
+        // Генератор імен знайомих (без змін)
+        const maleNames = [
+            'Степан', 'Єгор', 'Береза', 'Вавілон', 'Максим Бондаренко',
+            'Женя мальчік', 'Артем', 'Ілюша гітаріст', 'Ілюха', 'Юрчик',
+            'Коля', 'Юра мужик', 'Петро', 'Міша рибак', 'Кіріл',
+            'Глєб', 'Льоша', 'Святік', 'Міша Трубніков', 'Саша пчолка'
+        ];
+
+        const femaleNames = [
+            'Дана', 'Катя', 'Соня', 'Соломія', 'Кіра',
+            'Наташа', 'Ксюша', 'Аня л', 'Женя дівчинка', 'Іванка',
+            'Богдана', 'Даша', 'Дора', 'Даша панк', 'Маша панк',
+            'мама соні', 'мама каті', 'Галина Павлівна', 'Міщенка', 'Соня Величко'
+        ];
+
+        function generateRandomName() {
+            const genderFilter = document.getElementById('nameGenderFilter').value;
+            const resultEl = document.getElementById('randomNameResult');
+            let namesToChooseFrom = [];
+
+            if (genderFilter === 'male') {
+                namesToChooseFrom = maleNames;
+            } else if (genderFilter === 'female') {
+                namesToChooseFrom = femaleNames;
+            } else { // 'all'
+                namesToChooseFrom = maleNames.concat(femaleNames);
+            }
+
+            if (namesToChooseFrom.length === 0) {
+                resultEl.innerText = 'Немає імен для вибору з обраним фільтром.';
+                return;
+            }
+
+            const randomIndex = Math.floor(Math.random() * namesToChooseFrom.length);
+            resultEl.innerText = namesToChooseFrom[randomIndex];
+        }
+
+        // --- Розширений Генератор Ворожінь ---
+        const fortuneData = {
+            day: [
+                'Сьогоднішній день принесе несподівану радість.',
+                'Будьте уважні до деталей, вони можуть вказати на нову можливість.',
+                'Можлива зустріч, яка змінить ваш погляд на речі.',
+                'День сприятливий для завершення старих справ.',
+                'Сьогодні ваша енергія буде на висоті, використовуйте її мудро.',
+                'Остерігайтеся дрібних непорозумінь, вони можуть перерости у щось більше.',
+                'Несподіваний дзвінок або повідомлення принесе важливу інформацію.',
+                'Сьогодні варто присвятити час відпочинку та відновленню сил.',
+                'Ваша креативність буде на піку, реалізуйте свої ідеї.',
+                'Можлива невелика фінансова надбавка або приємний бонус.',
+                'День підходить для роздумів та планування майбутнього.',
+                'Зверніть увагу на знаки навколо, вони можуть бути підказками.',
+                'Сьогодні ви можете отримати підтримку від несподіваної людини.',
+                'Можливий невеликий конфлікт, але його легко вирішити.',
+                'Будьте відкриті до нових вражень, вони збагатять ваш день.',
+                'Сьогоднішня посмішка може змінити чийсь день.',
+                'Не варто перейматися дрібницями, зосередьтеся на головному.',
+                'Можлива приємна новина від далеких родичів чи друзів.',
+                'День ідеальний для початку чогось нового, навіть якщо це дрібниця.',
+                'Ваша інтуїція сьогодні працює відмінно, довіряйте їй.',
+                'Не бійтеся відстоювати свою думку, якщо ви впевнені в ній.',
+                'Очікуйте приємний комплімент або похвалу.',
+                'Сьогодні вдалий день для фізичної активності.',
+                'Можлива невелика перешкода, але ви легко її подолаєте.',
+                'Зверніть увагу на свої сни, вони можуть бути пророчими.',
+                'Сьогоднішнє спонтанне рішення принесе позитивні наслідки.',
+                'Не варто довіряти сумнівним пропозиціям.',
+                'День сприятливий для саморозвитку та навчання.',
+                'Можлива зустріч зі старим знайомим.',
+                'Будьте щедрі на добро, воно повернеться вам сторицею.'
+            ],
+            relationships: [
+                'У стосунках очікуйте гармонії',
+                'Можлива невелика суперечка',
+                'Приділіть більше уваги партнеру, він потребує вашої підтримки.',
+                'Сьогодні ви можете відчути особливу близькість зі своїм обранцем/обраницею.',
+                'Не бійтеся висловлювати свої почуття, вони будуть почуті.',
+                'Пора зраджувати',
+                'Варто проявити ініціативу у стосунках, це принесе плоди.',
+                'Не ігноруйте дрібні сигнали, вони можуть бути важливими.',
+                'У вас скоро дитя родиться',
+                'Партнер вам скоро зрадить',
+                'Це та/той самий! всьо ок ',
+                'У нього/неї дуже серйозний секрет від вас',
+                'тут лише дружба не більше',
+                'навряд у вас є будущє',
+                'ви одинокі в цих стосунках(((',
+                'тебе використовують',
+                'ну нєєєє чо ти питаєш за нього, якщо рядом з тобою є інший адекватний красавчік',
+                'далі буде краще, треба час',
+                'він/вона вже готові на все заради вас',
+                'вас використовують',
+                'Можливе відновлення старих зв\'язків',
+                'Будьте терплячими до недоліків інших.',
+                'Скоро буде щіре признання',
+                'Він не сприймає тебе як дівчину/ Вона не сприймає тебе як хлопця',
+                'Ваші стосунки переходять на новий рівень.',
+                'Зараз краще побути одному',
+                'Проявіть більше ініціативи',
+                'Сьогодні ваша інтуїція підкаже правильне рішення у стосунках.',
+                'Будьте готові до приємних змін у особистому житті.',
+                'Ваші стосунки освітлені щастям, насолоджуйтесь моментом.',
+                'це швидко закінчиться'
+            ],
+            future: [
+                'Ваше майбутнє обіцяє великі зміни, будьте готові до них.',
+                'На горизонті з\'явиться нова можливість, не пропустіть її.',
+                'Ваша кар\'єра піде вгору завдяки несподіваному повороту.',
+                'Фінансове становище значно покращиться, але не марнотратьте.',
+                'Очікуйте приємної подорожі або переїзду.',
+                'Ваше здоров\'я зміцниться, але не забувайте про профілактику.',
+                'На вас чекає важливе рішення, яке вплине на подальше життя.',
+                'Можливе поповнення в родині або радісна новина, пов\'язана з дітьми.',
+                'Ваша мрія почне здійснюватися, якщо ви докладете зусиль.',
+                'Майбутнє обіцяє період спокою та стабільності.',
+                'Остерігайтеся заздрісників, вони можуть нашкодити вашим планам.',
+                'Навчання або нові знання відіграють ключову роль у вашому майбутньому.',
+                'Ваші творчі здібності принесуть успіх.',
+                'Можливе вирішення давньої проблеми, яка вас турбувала.',
+                'У вашому житті з\'явиться новий наставник або вчитель.',
+                'Майбутнє обіцяє розкриття талантів, про які ви не здогадувались.',
+                'Будьте готові до публічного визнання або нагороди.',
+                'Ваше соціальне коло розшириться, з\'являться нові друзі.',
+                'Очікуйте несподіваного подарунка долі.',
+                'Майбутнє принесе ясність у питаннях, які вас бентежили.',
+                'Не бійтеся розпочинати все з чистого аркуша.',
+                'Ваша репутація зміцниться.',
+                'Можливі невеликі випробування, але вони зроблять вас сильнішими.',
+                'Прийшов час для реалізації амбітних планів.',
+                'Ваше майбутнє пов\'язане з далекими країнами.',
+                'Очікуйте надихаючої події, яка змінить ваше сприйняття.',
+                'У ваше життя прийде людина, яка стане важливою опорою.',
+                'Майбутнє обіцяє багато радості та сміху.',
+                'Не забувайте про свої коріння, вони дадуть вам силу.',
+                'Ваша мудрість зросте, і ви знайдете відповіді на багато питань.'
+            ],
+            secret: [
+                'Питав(-ла) у чата ГПТ, чи у вас щось вийде.',
+                'Створив(-ла) чат-бот, названий твоїм ім\'ям, і симулює ваші розмови.',
+                'Має свій "мікропроєкт".',
+                'Уже давно не мився(-лася).',
+                'Подобається, коли його/її називають "соплєжуй".',
+                'Думає, що ти стерва.',
+                'Соромиться вас.',
+                'Таємно закоханий(-а) у вас.',
+                'Вас ненавидить.',
+                'Любить іншого(-у).',
+                'Постійно зраджує партнеру.',
+                'Насправді пісяє в басейн. Кожен раз. І дивиться людям в очі.',
+                'Коли не було серветок, витер(-ла) ніс рукавом твоєї куртки.',
+                'Не міняє труси тижнями.',
+                'Кинув(-ла) котлету в кондиціонер сусіда — бо він слухав шансон.',
+                'Робив(-ла) "обряд очищення" зубною щіткою свого колишнього(-ї).',
+                'Має борг перед Богом.',
+                'Вкрав(-ла) у тебе щось.',
+                'Це демон.',
+                'Насправді це не він/вона, а його/її двійник.',
+                'Слухає пісню "Місія секстур" на серйозі і кайфує від неї.',
+                'Це не його/її мама.',
+                'Любить колишнього(-у).',
+                'Його/її багатство/успіх прийшли не зовсім чесним шляхом.',
+                'Вони таємно їдять батати та банани.',
+                'Має фальшивий акаунт у соцмережах, де стежить за вами.',
+                'Вони таємно заздрять вам.',
+                'Має приховану залежність від фаст-фуду.',
+                'Зберігає листи від таємного шанувальника/шанувальниці.',
+                'Ніколи не читав(-ла) книги, які вдає, що читав(-ла).'
+            ]
+        };
+
+        function generateFortune(category) {
+            const resultEl = document.getElementById('fortuneResult');
+            const fortunes = fortuneData[category];
+
+            if (fortunes && fortunes.length > 0) {
+                const randomIndex = Math.floor(Math.random() * fortunes.length);
+                resultEl.innerText = fortunes[randomIndex];
+            } else {
+                resultEl.innerText = 'Немає передбачень для цієї категорії.';
+            }
+        }
+
+
+        // Ініціалізація: показати меню при завантаженні
+        backToMenu();
+    </script>
+</body>
+</html>
